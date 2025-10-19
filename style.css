@@ -1,0 +1,129 @@
+body {
+    display: flex;
+    margin: 8px 0;
+}
+
+div {
+    display: flex;
+}
+
+.vertical {
+    flex-direction: column;
+    gap: 8px;
+}
+
+.horizontal {
+    flex-direction: row;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+input {
+    text-align: center;
+}
+
+
+.welcome-container {
+    margin: 0 20px;
+}
+
+.navlink {
+    border: 3px solid red;
+    border-radius: 4px;
+    background-color: antiquewhite;
+    margin: 8px auto 8px 0;
+    padding: 2px;
+    text-align: center;
+}
+
+.navlink:hover {
+    text-decoration: underline;
+}
+
+.navlink.disabled {
+    pointer-events: none;  
+    opacity: 0.5;    
+}
+
+.home-image {
+    height: 300px;
+    width: auto;
+}
+
+p {
+    padding: 0;
+    margin: 0;
+}
+
+table {
+    margin-right: auto;
+    text-align: center;
+    font-size: 20px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.item-column {
+    min-width: 90px;
+    text-align: center;
+}
+
+.btn {
+    border: 2px solid;
+    border-radius: 4px;
+    background-color: #bdd2ff;
+    font-size: 14px;
+}
+
+.remove {
+    border-color: red;
+    background-color: antiquewhite;
+    padding-left: 15px;
+}
+
+.add {
+    border-color: green;
+    background-color: rgb(171, 251, 171);
+}
+
+.btn:hover {
+    cursor: pointer;
+}
+
+.outfit-div, .clothing-container, .combos {
+    margin: 20px 20px;
+}
+
+.outfit-div {
+    text-align: center;
+}
+
+.clothing-list {
+    flex-direction: column;
+}
+
+.outfit-results {
+    flex-direction: column;
+}
+
+.clothing-item, .outfit-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.outfit-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.clothing-img {
+  width: 80px;
+  height: auto;
+  border-radius: 8px;
+}
+

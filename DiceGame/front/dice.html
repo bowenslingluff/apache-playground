@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Game</title>
+    <style>
+        .navlink {
+            border: 3px solid red;
+            border-radius: 4px;
+            background-color: antiquewhite;
+            margin: 8px auto 8px 0;
+            padding: 2px;
+            text-align: center;
+        }
+        .navlink:hover {
+            text-decoration: underline;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4a148c;
+            margin-bottom: 20px;
+        }
+
+        .game-container {
+            background: #ffffffcc;
+            border-radius: 12px;
+            padding: 20px 30px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 8px 0;
+        }
+
+        span {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        button {
+            margin: 8px;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            background-color: #7b1fa2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover:not(:disabled) {
+            background-color: #9c27b0;
+        }
+        button:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+
+        #status {
+            font-style: italic;
+            color: #d84315;
+        }
+
+        #lastRoll {
+            font-size: 20px;
+            color: #0d47a1;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: row;
+        }
+
+    </style>
+</head>
+<body>
+    <a href="/index.html" class="navlink">Back to Home</a>
+    <h1>Dice Game</h1>
+    <p>Target: <span id="target">25</span></p>
+    <div class="controls">
+        <button id="startBtn">Start Game</button>
+        <button id="rollBtn" disabled>Roll Dice</button>
+        <button id="restartBtn" disabled>Restart Game</button>
+    </div>
+    <p>Last Roll: <span id="lastRoll">-</span></p>
+    <p>Rolls: <span id="rollCount">0</span></p>
+    <p>Total: <span id="score">0</span></p>
+    <p>Status: <span id="status">none</span></p>
+
+    <script>
+        const rollBtn = document.getElementById("rollBtn");
+        const startBtn = document.getElementById("startBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        const rollCountEl = document.getElementById("rollCount");
+        const scoreEl = document.getElementById("score");
+        const statusEl = document.getElementById("status");
+        const lastRollEl = document.getElementById("lastRoll");
+
+        async function startGame() {
+            await fetch("/game/start");
+            rollBtn.disabled = false;
+            restartBtn.disabled = false;
+            startBtn.disabled = true;
+            statusEl.textContent = "new";
+            lastRollEl.textContent = "-";
+            updateUI();
+        }
+
+        async function rollDice() {
+            // Get random roll from dice server
+            const diceRes = await fetch("/dice");
+            const rollValue = await diceRes.json();
+
+            // Send roll to game server
+            await fetch(`/game/addRoll?roll=${rollValue}`);
+
+            updateUI(rollValue);
+        }
+
+        async function updateUI(lastRoll) {
+            const res = await fetch("/game");
+            const game = await res.json();
+
+            rollCountEl.textContent = game.rollCount;
+            scoreEl.textContent = game.rollTotal;
+            statusEl.textContent = game.gameStatus;
+
+            if (lastRoll) {
+                lastRollEl.textContent = lastRoll;
+            }
+
+            if (game.gameStatus === "complete") {
+                rollBtn.disabled = true;
+                statusEl.textContent = "You Win!";
+            }
+        }
+
+        async function restartGame() {
+            await fetch("/game/start");
+            rollBtn.disabled = false;
+            scoreEl.textContent = "0";
+            rollCountEl.textContent = "0";
+            statusEl.textContent = "new";
+            lastRollEl.textContent = "-";
+        }
+
+        startBtn.addEventListener("click", startGame);
+        rollBtn.addEventListener("click", rollDice);
+        restartBtn.addEventListener("click", restartGame);
+    </script>
+</body>
+</html>

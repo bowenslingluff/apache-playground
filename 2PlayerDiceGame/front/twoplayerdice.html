@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #4a148c;
+            margin-bottom: 20px;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+
+        .navlink {
+            border: 3px solid red;
+            border-radius: 4px;
+            background-color: antiquewhite;
+            margin: 8px auto 8px 0;
+            padding: 2px;
+            text-align: center;
+        }
+        .navlink:hover {
+            text-decoration: underline;
+        }
+
+
+        table {
+            background: #ffffffcc;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.2);
+            margin-top: 20px;
+            min-width: 500px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px 16px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #7b1fa2;
+            color: white;
+            font-size: 16px;
+        }
+
+        td {
+            font-size: 15px;
+        }
+
+        button {
+            margin: 5px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background-color: #7b1fa2;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        button:hover:not(:disabled) {
+            background-color: #9c27b0;
+        }
+        button:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+
+        #gameStatus {
+            font-style: italic;
+            font-weight: bold;
+            color: #d84315;
+        }
+
+        #rollTarget {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body onload="loadGameState()">
+    <a href="/index.html" class="navlink">Back to Home</a>
+    <h1>Two Player Dice Game</h1>
+    <table>
+        <tr>
+            <th>Player</th>
+            <th>Number of Rolls</th>
+            <th>Last Roll</th>
+            <th>Roll Total</th>
+            <th>Action</th>
+        </tr>
+        <tr>
+            <td>
+                Player 1
+            </td>
+            <td>
+                <span id="rollCount_1">0</span>
+            </td>
+            <td><span id="lastRoll_1">-</span></td>
+            <td>
+                <span id="rollTotal_1">0</span>
+            </td>
+            <td>
+                <button id="rollButton_1">Roll</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Player 2
+            </td>
+            <td>
+                <span id="rollCount_2">0</span>
+            </td>
+            <td><span id="lastRoll_2">-</span></td>
+            <td>
+                <span id="rollTotal_2">0</span>
+            </td>
+            <td>
+                <button id="rollButton_2">Roll</button>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                Roll Target: <span id="rollTarget"></span>
+            </td>
+            <td>
+                <button id="newGame">New Game</button>
+            </td>
+        </tr>
+    </table>
+    <h2>Game Status: <span id="gameStatus">...</span></h2>
+    <script>
+        var actions = {
+            "start": "/game/start",
+            "load":"/game",
+            "addRoll1": "/game/addRoll1",
+            "addRoll2": "/game/addRoll2",
+            "diceRoll": "/dice"
+        }
+
+        document.getElementById("rollButton_1").addEventListener('click', () => rollDicePlayer1());
+        document.getElementById("rollButton_2").addEventListener('click', () => rollDicePlayer2());
+        document.getElementById("newGame").addEventListener('click', () => newGame());
+
+        async function newGame() {
+            let gameData = await fetch(actions['start'])
+                .then(response => response.json())
+                .then(values => {
+                    updateGamePage(values);
+                    document.getElementById("rollButton_1").disabled = false;
+                    document.getElementById("rollButton_2").disabled = false;
+                })
+        }
+
+        function updateGamePage(gameData) {
+            document.getElementById('rollTotal_1').innerHTML=gameData.rollTotal1;
+            document.getElementById('rollCount_1').innerHTML=gameData.rollCount1;
+            document.getElementById('lastRoll_1').innerHTML = gameData.lastRoll1 || '-';
+
+            document.getElementById('rollTotal_2').innerHTML=gameData.rollTotal2;
+            document.getElementById('rollCount_2').innerHTML=gameData.rollCount2;
+            document.getElementById('lastRoll_2').innerHTML = gameData.lastRoll2 || '-';
+
+            document.getElementById('rollTarget').innerHTML=gameData.target;
+
+            if (gameData.winner) {
+                document.getElementById('gameStatus').innerHTML = gameData.winner;
+                document.getElementById("rollButton_1").disabled = true;
+                document.getElementById("rollButton_2").disabled = true;
+            } else {
+                document.getElementById('gameStatus').innerHTML=gameData.gameStatus;
+            }
+        }
+
+        async function rollDicePlayer1() {
+            let thisRoll = await fetch(actions['diceRoll'])
+                .then(response => response.json())
+                .then(value=> {
+                    // post to Node the dice roll
+                    addRoll1(value) ;
+                })
+        }
+
+        async function addRoll1(value) {
+            let promise = await fetch(actions['addRoll1']+'?roll='+value)
+                .then(response => response.json())
+                .then(values => updateGamePage(values))
+        }
+
+        async function rollDicePlayer2() {
+            let thisRoll = await fetch(actions['diceRoll'])
+                .then(response => response.json())
+                .then(values => addRoll2(values))
+        }
+
+        async function addRoll2(value) {
+            let promise = await fetch(actions['addRoll2']+'?roll='+value)
+                .then(response => response.json())
+                .then(values => updateGamePage(values))
+        }
+        async function loadGameState() {
+            let promise = await fetch(actions['load'] )
+                .then( response=>response.json())
+                .then (r => updateGamePage(r))
+        }
+    </script>
+</body>
+</html>

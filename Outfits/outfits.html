@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <script src="script.js" defer></script>
+    <title>Outfits</title>
+</head>
+<body onload="loadData()">
+    <div class="outfit-div vertical">
+        <a href="/index.html" class="navlink">Back to Home</a>
+        <h1 >Outfit Price Calculator</h1>
+        <form method="post">
+            <table id="pricesTable">
+                <tr>
+                    <th class="item-column">Item</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Shoes</p>
+                    </td>
+                    <td>
+                        <select class="brand" data-type="shoes" name="brand_shoes">
+                            <option value="">Select a brand</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input class="price" type="number" step="1.0" name="price">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Shirt</p>
+                    </td>
+                    <td>
+                        <select class="brand" data-type="shirt" name="brand_shirt">
+                            <option value="">Select a brand</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input class="price" type="number" step="1.0" name="price">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Pants</p>
+                    </td>
+                    <td>
+                        <select class="brand" data-type="pants" name="brand_pants">
+                            <option value="">Select a brand</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input class="price" type="number" step="1.0" name="price">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td> 
+                    <td>
+                        <button type="button" class="btn" onclick="calculateTotal()">Calculate Total</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"></td>
+                    <td>
+                        <p id="total">Total Price: $0.00</p>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="clothing-container vertical">
+        <h2>Clothing Items</h2>
+        <div id="clothingList" class="clothing-list"></div>
+    </div>
+    <div class="combos vertical">
+        <h2>Possible Outfits</h2>
+        <div id="outfitResults" class="outfit-results"></div>
+    </div>
+    <script>
+        async function populateBrands() {
+            // Fetch  JSON file
+            const response = await fetch('datafile.json');
+            const data = await response.json();
+
+            // Grab the dropdown elements
+            const dropdowns = document.querySelectorAll('select.brand');
+
+            dropdowns.forEach(dropdown => {
+                const type = dropdown.dataset.type; // Filter by type
+                const brandsSet = new Set();
+
+                // Collect brands that match this type
+                data.forEach(item => {
+                    if (item.type === type) {
+                        brandsSet.add(item.brand);
+                    }
+                });
+
+                // Add options to the dropdown
+                brandsSet.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    option.textContent = brand.charAt(0).toUpperCase() + brand.slice(1);
+                    dropdown.appendChild(option);
+                });
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', populateBrands);
+    </script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Connect Four</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <a href="/index.html" class="navlink">Back to Home</a>
+    <div class="game">
+        <div class="controls">
+            <div class="player-controls">
+                <label for="player-select">View as:</label>
+                <select id="player-select">
+                    <option value="1">Player 1</option>
+                    <option value="2">Player 2</option>
+                </select>
+            </div>
+
+            <div class="status-area">
+                <p id="status-text">Loading game...</p>
+                <button id="new-game">Start New Game</button>
+                <p class="info-text">Click an arrow to place a token in the corresponding column!</p>
+            </div>
+        </div>
+        <div id="game-container">
+            <h1>Connect Four</h1>
+            <table id="board"></table>
+
+            <div id="column-buttons">
+                <button class="col-btn" data-col="0">↓</button>
+                <button class="col-btn" data-col="1">↓</button>
+                <button class="col-btn" data-col="2">↓</button>
+                <button class="col-btn" data-col="3">↓</button>
+                <button class="col-btn" data-col="4">↓</button>
+                <button class="col-btn" data-col="5">↓</button>
+                <button class="col-btn" data-col="6">↓</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

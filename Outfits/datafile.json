@@ -1,0 +1,80 @@
+[
+  {
+    "type": "shoes",
+    "brand": "nike",
+    "cost": 89.99,
+    "img": "img/nike_shoes1.avif"
+  },
+  {
+    "type": "pants",
+    "brand": "h&m",
+    "cost": 59.99,
+    "img": "img/h&m_jeans1.avif"
+  },
+  {
+    "type": "shoes",
+    "brand": "hoka",
+    "cost": 150.00,
+    "img": "img/hoka_shoes1.webp"
+  },
+  {
+    "type": "pants",
+    "brand": "nike",
+    "cost": 59.99,
+    "img": "img/nike_pants1.webp"
+  },
+  {
+    "type": "shirt",
+    "brand": "abercrombie",
+    "cost": 45.00,
+    "img": "img/abercrombie_shirt1.avif"
+  },
+  {
+    "type": "shoes",
+    "brand": "hoka",
+    "cost": 160.00,
+    "img": "img/hoka_shoes2.jpeg"
+  },
+  {
+    "type": "shirt",
+    "brand": "patagonia",
+    "cost": 39.99,
+    "img": "img/patagonia_shirt1.webp"
+  },
+  {
+    "type": "pants",
+    "brand": "old navy",
+    "cost": 52.00,
+    "img": "img/oldnavy_pants1.webp"
+  },
+  {
+    "type": "shoes",
+    "brand": "birkenstock",
+    "cost": 130.00,
+    "img": "img/birkenstock_shoes1.webp"
+  },
+  {
+    "type": "shirt",
+    "brand": "patagonia",
+    "cost": 34.99,
+    "img": "img/patagonia_shirt2.webp"
+  },
+  {
+    "type": "pants",
+    "brand": "vuori",
+    "cost": 79.99,
+    "img": "img/vuori_pants1.webp"
+  },
+  {
+    "type": "shirt",
+    "brand": "rhoback",
+    "cost": 100.00,
+    "img": "img/rhoback_shirt1.avif"
+  },
+  {
+    "type": "shirt",
+    "brand": "nike",
+    "cost": 30.00,
+    "img": "img/nike_shirt1.jpg"
+  }
+]

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Shopping List</title>
+    <style>
+        div {
+            margin: 0 auto;
+        }
+
+        .mylist {
+            text-align: center;
+            margin: 0 auto;
+        }
+        /* Headings */
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: #4a148c;
+        }
+
+        h2 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #7b1fa2;
+        }
+
+        h3 {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            color: blue;
+        }
+
+        /* Divider line */
+        .divider {
+            border-top: 2px solid #eee;
+            margin: 20px 0;
+        }
+
+        /* Lists */
+        ul {
+            list-style-type: none;
+            margin-left: 0;
+        }
+
+        li {
+            background: #f8f8f8;
+            margin: 5px 0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+        /* Highlight for best prices */
+        #shopping-plan li {
+            background: #e9f7ef;
+            border: 1px solid #c8e6c9;
+        }
+    </style>
+</head>
+<body>
+    <div class="vertical">
+        <a href="/index.html" class="navlink">Back to Home</a>
+        <div id="all-prices" class="vertical"></div>
+    </div>
+    <div class="vertical">
+        <h1>Your Shopping List</h1>
+        <p class="mylist"></p>
+        <div id="shopping-plan" class="vertical"></div>
+    </div>
+    <script>
+        // Shopping List
+        class Store {
+            constructor(name, productList) {
+                this.productList = productList;
+                this.name = name;
+            }
+            getPriceForProduct(name) {
+                for (const p of this.productList) {
+                    if (p.name === name) {
+                        return p.price;
+                    }
+                }
+                return null;
+            }
+        }
+
+        class Product {
+            constructor(name, price) {
+                this.price = price;
+                this.name = name;
+            }
+        }
+
+        class Shopper {
+            constructor(shoppingList, stores) {
+                this.shoppingList = shoppingList;
+                this.stores = stores;
+            }
+
+            generateShoppingSuggestions(){
+                const suggestions = {};
+                for (const item of this.shoppingList) {
+                    let bestPrice = Infinity;
+                    let bestStore = null;
+
+                    for (const store of this.stores) {
+                        const price = store.getPriceForProduct(item);
+
+                        if (price !== null && price < bestPrice) {
+                            bestPrice = price;
+                            bestStore = store;
+                        }
+                    }
+
+                    if (bestStore) {
+                        if (!suggestions[bestStore.name]) {
+                            suggestions[bestStore.name] = [];
+                        }
+                        suggestions[bestStore.name].push({ name: item, price: bestPrice });
+                    }
+                }
+                return suggestions;
+            }
+        }
+
+        const krogerProducts = [ new Product('Milk', 3.50), new Product('Bread', 2.50), new Product('Eggs', 4.00), new Product('Cheese', 5.00), new Product('Apples', 3.00) ];
+        const walmartProducts = [ new Product('Milk', 3.45), new Product('Bread', 2.60), new Product('Eggs', 3.85), new Product('Cheese', 5.00), new Product('Apples', 3.10) ];
+        const kroger = new Store('Kroger', krogerProducts);
+        const walmart = new Store('Walmart', walmartProducts);
+        const allStores = [kroger, walmart];
+
+        const myShoppingList = ['Milk', 'Bread', 'Eggs'];
+        const myListContainer = document.querySelector('.mylist');
+
+        let listHTML = `<ul>`;
+        for (const item of myShoppingList) {
+            listHTML += `<li>${item}</li>`;
+        }
+        listHTML += `</ul>`;
+        
+        myListContainer.innerHTML = listHTML;
+
+        // --- 1. DISPLAY ALL STORE PRICES (New Section) ---
+        const pricesContainer = document.getElementById('all-prices');
+        let pricesHTML = "<h2>Prices</h2>";
+
+        // Loop through each store
+        for (const store of allStores) {
+            pricesHTML += `<h3>${store.name}</h3>`;
+            pricesHTML += `<ul>`;
+            // Loop through every product in that store's list
+            for (const product of store.productList) {
+                pricesHTML += `<li>${product.name} - $${product.price.toFixed(2)}</li>`;
+            }
+            pricesHTML += `</ul>`;
+        }
+        pricesContainer.innerHTML = pricesHTML;
+
+        // --- 2. DISPLAY THE OPTIMIZED SHOPPING LIST (Existing Logic) ---
+        const shopper = new Shopper(myShoppingList, allStores);
+        const finalPlan = shopper.generateShoppingSuggestions();
+        const planContainer = document.getElementById('shopping-plan');
+
+        let generatedHtml = ""; // Start with an empty string
+
+        for (const storeName in finalPlan) {
+            generatedHtml += `<h2>Buy at ${storeName}:</h2>`;
+            
+            generatedHtml += `<ul>`;
+            for (const item of finalPlan[storeName]) {
+                generatedHtml += `<li>${item.name} - $${item.price.toFixed(2)}</li>`;
+            }
+            generatedHtml += `</ul>`;
+        }
+        planContainer.innerHTML = generatedHtml;
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>ISA Website</title>
+</head>
+<body>
+  <div class="vertical welcome-container">
+    <h1>
+      The website of all time
+    </h1>
+    <a class="navlink" href="/outfits">
+      Outfits Page
+    </a>
+    <a class="navlink" href="/shopping-list">
+      Shopping List
+    </a>
+    <a class="navlink" href="/modal">
+      Modal
+    </a>
+    <a class="navlink" href="/dicegame">
+      Dice Game
+    </a>
+    <a class="navlink" href="/dicegame2">
+      Dice Game (2 Player)
+    </a>
+    <a class="navlink" href="/connect4">
+      Connect Four
+    </a>
+    <a id="nodeServerLink" class="navlink disabled" href="http://localhost:3000/" target="_blank">
+        Go to Node Server (if running)
+    </a>
+    <form action="/cgi-bin/form-processor" method="post">
+      <label for="name">Name:</label><br>
+      <input type="text" id="name" name="name"><br>
+      <input type="submit" name="Submit" value="Confirm"/>
+    </form>
+  </div>
+  
+  <div class="horizontal">  
+    <div>
+      <img class="home-image" src="Test_image.jpeg">
+    </div>
+  </div>
+  <script>
+    async function checkNodeServer() {
+        const link = document.getElementById('nodeServerLink');
+
+        try {
+            // Try fetching the root of the Node server with a short timeout
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 seconds timeout
+
+            const response = await fetch('/firstserver/', { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+                // Server is running, enable the link
+                link.classList.remove('disabled');
+                link.href = '/firstserver/';
+            }
+        } catch (err) {
+            // Server not reachable, leave link disabled
+            console.log('Node server not reachable:', err);
+        }
+    }
+
+    checkNodeServer();
+  </script>
+
+</body>
+</html>
