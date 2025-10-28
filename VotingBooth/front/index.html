@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Booth Application</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Voting Booth Application</h1>
+        </header>
+
+        <main>
+
+            <!-- Voter Registration Section -->
+            <section class="section" id="voter-section">
+                <h2>Voter Registration</h2>
+                <div class="form-group">
+                    <input type="text" id="voter-name" placeholder="Enter your name" required>
+                    <button id="register-voter-btn">Register as Voter</button>
+                </div>
+            </section>
+
+            <!-- Voting Section -->
+            <section class="section" id="voting-section">
+                <h2>Cast Your Vote</h2>
+                <div class="form-group">
+                    <select id="voter-select" required>
+                        <option value="">Select a voter</option>
+                    </select>
+                    <button id="load-voting-btn">Load Voting Options</button>
+                </div>
+                <div id="voting-options" class="voting-options" style="display: none;">
+                    <h3>Select a candidate:</h3>
+                    <div id="candidate-options">
+                        <!-- Candidate options will be loaded here -->
+                    </div>
+                    <button id="submit-vote-btn" style="display: none;">Submit Vote</button>
+                </div>
+            </section>
+
+            <!-- Voter Lists Section -->
+            <section class="section" id="voter-lists-section">
+                <h2>Voter Status</h2>
+                <div class="voter-lists">
+                    <div class="voter-list">
+                        <h3>Registered Voters</h3>
+                        <div id="not-voted-list" class="voter-list-content">
+                            <!-- Voters who haven't voted will be shown here -->
+                        </div>
+                    </div>
+                    <div class="voter-list">
+                        <h3>Completed Ballots</h3>
+                        <div id="voted-list" class="voter-list-content">
+                            <!-- Voters who have voted will be shown here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <main>
+            <section class="section" id="candidate-section">
+                <h2>Candidate Management</h2>
+                <div class="form-group">
+                    <input type="text" id="candidate-name" placeholder="Enter candidate name" required>
+                    <button id="add-candidate-btn">Add Candidate</button>
+                </div>
+                <div class="candidates-list" id="candidates-list">
+                </div>
+            </section>
+            <!-- Results Section -->
+            <section class="section" id="results-section">
+                <h2>Voting Results</h2>
+                <div id="results-content">
+                    <!-- Results will be displayed here -->
+                </div>
+                <button id="load-results-btn">Load Results</button>
+            </section>
+        </main>
+        <!-- Status Messages -->
+        <div id="status-message" class="status-message"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="api-service.js"></script>
+    <script src="view-controller.js"></script>
+</body>
+</html>

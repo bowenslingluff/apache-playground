@@ -1,0 +1,13 @@
+{
+  "name": "voting-booth-database",
+  "version": "1.0.0",
+  "description": "Database layer for Voting Booth application",
+  "main": "db/index.js",
+  "dependencies": {
+    "mongoose": "^7.5.0",
+    "dotenv": "^16.3.1"
+  },
+  "keywords": ["database", "mongodb", "voting"],
+  "author": "",
+  "license": "MIT"
+}
