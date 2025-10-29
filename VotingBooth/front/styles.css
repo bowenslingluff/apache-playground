@@ -14,8 +14,8 @@ body {
 main {
     display: flex;
     flex-direction: row;
-    align-items: center;
     justify-content: center;
+    height: 100%;
 }
 
 .container {
@@ -26,7 +26,6 @@ main {
 /* Header styles */
 header {
     text-align: center;
-    margin-bottom: 40px;
     background: rgba(255, 255, 255, 0.95);
     padding: 30px;
 }
@@ -47,6 +46,7 @@ header p {
     background: rgba(255, 255, 255, 0.95);
     margin-bottom: 30px;
     padding: 25px;
+    border: 3px solid #3498db;
 }
 
 .section h2 {
@@ -126,15 +126,14 @@ button:active {
     background: #f8f9fa;
     padding: 15px;
     border-radius: 10px;
-    border-left: 4px solid #3498db;
+    border: 3px solid black;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: all 0.3s ease;
 }
 
 .candidate-item.voted {
-    border-left-color: #27ae60;
+    border-color: #27ae60;
     background: #e8f5e8;
 }
 
@@ -208,7 +207,6 @@ button:active {
     width: 300px;
 }
 .results-item {
-    padding: 20px;
     margin: 10px 0;
     border-radius: 10px;
     display: flex;
@@ -244,9 +242,9 @@ button:active {
     color: white;
     font-weight: 600;
     z-index: 1000;
-    transform: translateX(400px);
+    transform: translateX(600px);
     transition: transform 0.3s ease;
-    max-width: 300px;
+    max-width: 500px;
 }
 
 .status-message.show {
@@ -327,4 +325,19 @@ button:active {
     display: block;
     font-size: 3rem;
     margin-bottom: 15px;
+}
+
+.navlink {
+    border: 3px solid red;
+    border-radius: 4px;
+    background-color: antiquewhite;
+    margin: 8px auto 8px 0;
+    padding: 2px;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+}
+
+.navlink:hover {
+    text-decoration: underline;
 }

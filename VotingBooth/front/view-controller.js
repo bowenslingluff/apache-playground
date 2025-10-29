@@ -129,12 +129,26 @@ class VotingViewController {
         }
     }
 
-    renderVoterSelect(voters) {
+    async renderVoterSelect(voters) {
         const select = document.getElementById('voter-select');
+
+        const voterStatus = await this.getVotersWithStatus();
+
         select.innerHTML = '<option value="">Select a voter</option>' +
-            voters.map(voter => `
-                <option value="${voter._id}">${voter.voterName}</option>
-            `).join('');
+            voters.map(voter => {
+                const hasVoted = voterStatus.voted.some(votedVoter => 
+                    votedVoter._id.toString() === voter._id.toString()
+                );
+                if (hasVoted) {
+                    return `<option value="${voter._id}" disabled>
+                        ${voter.voterName} (Already Voted)
+                    </option>`;
+                } else {
+                    return `<option value="${voter._id}">
+                        ${voter.voterName}
+                    </option>`;
+                }
+            }).join('');
     }
 
     // Voting methods
