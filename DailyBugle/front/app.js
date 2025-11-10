@@ -54,7 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             // Show comment form 
             commentForm.classList.remove('hidden');
-            loadRandomAd(); 
+            if (user.role !== 'Author') {
+                loadRandomAd();
+            }
         } else {
             // User is anonymous
             navAuth.innerHTML = '<a href="login.html"><button>Login</button></a>';

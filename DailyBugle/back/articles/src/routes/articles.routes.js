@@ -19,7 +19,8 @@ const checkAuth = (req, res, next) => {
 };
 
 const checkAuthor = (req, res, next) => {
-    const userRole = req.userRole;
+    const userRole = req.user.role;
+    console.log("User role:", userRole);
     if (userRole !== 'Author') {
         return res.status(403).json({ message: 'Requires Author Role' });
     }
