@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: dailybugle-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - bugle-net
+
+  auth:
+    build: ./back/auth
+    container_name: dailybugle-auth
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/dailybugle
+      - PORT=8081
+      - JWT_SECRET=YOUR_SUPER_SECRET_KEY
+    networks:
+      - bugle-net
+
+  articles:
+    build: ./back/articles
+    container_name: dailybugle-articles
+    ports:
+      - "8082:8082"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/dailybugle
+      - PORT=8082
+    networks:
+      - bugle-net
+
+  ads:
+    build: ./back/ads
+    container_name: dailybugle-ads
+    ports:
+      - "8083:8083"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/dailybugle
+      - PORT=8083
+    networks:
+      - bugle-net
+
+  web-server:
+    image: httpd:2.4
+    container_name: dailybugle-httpd
+    ports:
+      - "80:80"
+    volumes:
+      - ./front:/usr/local/apache2/htdocs/
+    depends_on:
+      - auth
+      - articles
+      - ads
+    networks:
+      - bugle-net
+
+networks:
+  bugle-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
