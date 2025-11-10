@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 routes.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-
+        
         if (!username || !password) {
             return res.status(400).json({ message: 'Username and password are required' });
         }
