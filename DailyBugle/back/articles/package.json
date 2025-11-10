@@ -1,0 +1,14 @@
+{
+  "name": "article-service",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1",
+    "cors": "^2.8.5",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
