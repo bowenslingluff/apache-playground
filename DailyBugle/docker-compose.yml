@@ -13,6 +13,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
     networks:
       - bugle-net
+    volumes:
+      - ./back/auth/src:/usr/src/app/src
 
   articles:
     build: ./back/articles
@@ -26,6 +28,8 @@ services:
       - JWT_SECRET=${JWT_SECRET}
     networks:
       - bugle-net
+    volumes:
+      - ./back/articles/src:/usr/src/app/src
 
   ads:
     build: ./back/ads
@@ -38,6 +42,8 @@ services:
       - PORT=8083
     networks:
       - bugle-net
+    volumes:
+      - ./back/ads/src:/usr/src/app/src
 
   web-server:
     image: httpd:2.4
