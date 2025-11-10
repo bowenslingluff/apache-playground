@@ -1,0 +1,297 @@
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Get user data from local storage
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user'));
+    let currentArticleId = null;
+
+    const navAuth = document.getElementById('nav-auth');
+    const articleListView = document.getElementById('article-list-view');
+    const articleSingleView = document.getElementById('article-single-view');
+    const articleListContainer = document.getElementById('article-list-container');
+    const backToListLink = document.getElementById('back-to-list');
+
+    const createArticleView = document.getElementById('create-article-view');
+    const createArticleForm = document.getElementById('create-article-form');
+    const cancelCreateBtn = document.getElementById('cancel-create-btn');
+
+    // Single article elements
+    const articleTitle = document.getElementById('article-title');
+    const articleDate = document.getElementById('article-date');
+    const articleBody = document.getElementById('article-body');
+
+    // Ad elements
+    const adContainer = document.getElementById('ad-container');
+    const adContent = document.getElementById('ad-content');
+
+    // Comment elements
+    const commentForm = document.getElementById('comment-form');
+    const commentList = document.getElementById('comment-list');
+
+    // Update header based on login status
+    function setupNav() {
+        if (token && user) { // User is logged in
+            let authorBtn = '';
+            if (user.role === 'Author') {
+                authorBtn = '<button id="new-post-btn">New Post</button>';
+            }
+
+            navAuth.innerHTML = `
+                <span>Welcome, ${user.username} (${user.role})</span>
+                ${authorBtn}
+                <button id="logout-btn">Logout</button>
+            `;
+
+            if (user.role === 'Author') {
+                document.getElementById('new-post-btn').addEventListener('click', showCreateArticleView);
+            }
+            
+            // Add check for logout button
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            });
+            // Show comment form 
+            commentForm.classList.remove('hidden');
+            loadRandomAd(); 
+        } else {
+            // User is anonymous
+            navAuth.innerHTML = '<a href="login.html"><button>Login</button></a>';
+            loadRandomAd(); 
+        }
+    }
+
+    // Fetch teasers for all articles
+    async function fetchArticleList() {
+        try {
+            const res = await fetch(`${API_URLS.articles}/articles`);
+            if (!res.ok) throw new Error('Failed to fetch articles');
+            const articles = await res.json();
+            renderArticleList(articles);
+        } catch (err) {
+            articleListContainer.innerHTML = `<p>Error: ${err.message}</p>`;
+        }
+    }
+
+    // Fetch a single full article
+    async function fetchSingleArticle(id) {
+        try {
+            currentArticleId = id;
+            const res = await fetch(`${API_URLS.articles}/articles/${id}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!res.ok) throw new Error('Failed to fetch article');
+            const article = await res.json();
+            renderSingleArticle(article);
+            
+            articleListView.classList.add('hidden');
+            articleSingleView.classList.remove('hidden');
+        } catch (err) {
+            console.error(err);
+            showArticleList(); 
+        }
+    }
+
+    // fetch a random ad
+    async function loadRandomAd() {
+        try {
+            const res = await fetch(`${API_URLS.ads}/ads/random`);
+            if (!res.ok) throw new Error('No ads available');
+            const ad = await res.json();
+            
+            // Render the ad
+            adContent.textContent = ad.advertisement;
+            adContainer.classList.remove('hidden');
+            
+            // Record ad view
+            recordAdEvent('impression', ad._id);
+
+            // Handle ad click
+            adContainer.addEventListener('click', () => {
+                recordAdEvent('interaction', ad._id);
+                adContent.textContent = "Thanks for clicking!";
+            });
+
+        } catch (err) {
+            console.error(err.message);
+            adContent.textContent = 'No ads to display.';
+        }
+    }
+    
+    // Record an ad event (impression or interaction)
+    async function recordAdEvent(eventType, adId) {
+        fetch(`${API_URLS.ads}/ads/event`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                adId: adId,
+                eventType: eventType,
+                userId: user ? user.id : null 
+            })
+        });
+    }
+    
+    // post a comment
+    async function postNewComment(e) {
+        e.preventDefault();
+        const commentBody = document.getElementById('comment-body').value;
+        if (!commentBody || !currentArticleId) return;
+
+        try {
+            const res = await fetch(`${API_URLS.articles}/articles/${currentArticleId}/comment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ commentBody })
+            });
+
+            if (!res.ok) throw new Error('Failed to post comment');
+            
+            const updatedArticle = await res.json();
+
+            renderComments(updatedArticle.comments);
+            document.getElementById('comment-body').value = '';
+
+        } catch (err) {
+            console.error(err);
+            alert(`Error: ${err.message}`);
+        }
+    }
+
+    // Render the list of article teasers
+    function renderArticleList(articles) {
+        if (articles.length === 0) {
+            articleListContainer.innerHTML = '<p>No articles found.</p>';
+            return;
+        }
+        
+        articleListContainer.innerHTML = articles.map(article => `
+            <article data-id="${article._id}">
+                <h2>${article.title}</h2>
+                <p>${article.teaser}</p>
+                <small>Categories: ${article.categories.join(', ')}</small>
+            </article>
+        `).join('');
+    }
+
+    function showCreateArticleView() {
+        articleListView.classList.add('hidden');
+        articleSingleView.classList.add('hidden');
+        createArticleView.classList.remove('hidden');
+    }
+
+    async function handleCreateArticle(e) {
+        e.preventDefault();
+        const msgEl = document.getElementById('create-message');
+        
+        const title = document.getElementById('create-title').value;
+        const teaser = document.getElementById('create-teaser').value;
+        const body = document.getElementById('create-body').value;
+        const categories = document.getElementById('create-categories').value.split(',')
+                           .map(cat => cat.trim()).filter(cat => cat);
+
+        try {
+            const res = await fetch(`${API_URLS.articles}/articles`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ title, teaser, body, categories })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message);
+            }
+
+            const newArticle = await res.json();
+            
+            msgEl.textContent = 'Article created successfully!';
+            msgEl.className = 'message success';
+            createArticleForm.reset();
+            
+            setTimeout(() => {
+                msgEl.textContent = '';
+                msgEl.className = 'message';
+                showArticleList();
+                fetchArticleList();
+            }, 2000);
+
+        } catch (err) {
+            msgEl.textContent = `Error: ${err.message}`;
+            msgEl.className = 'message error';
+        }
+    }
+
+    // render a single full article
+    function renderSingleArticle(article) {
+        articleTitle.textContent = article.title;
+        articleDate.textContent = new Date(article.createdAt).toLocaleDateString();
+        articleBody.innerHTML = article.body.replace(/\n/g, '<br>'); // Convert newlines to <br>
+        renderComments(article.comments);
+    }
+    
+    // render comments for an article
+    function renderComments(comments) {
+        if (comments.length === 0) {
+            commentList.innerHTML = '<p>No comments yet.</p>';
+            return;
+        }
+        commentList.innerHTML = comments.map(comment => `
+            <div class="comment">
+                <strong>${comment.username}</strong>
+                <p>${comment.commentBody}</p>
+                <small>${new Date(comment.createdAt).toLocaleString()}</small>
+            </div>
+        `).join('');
+    }
+
+    // Show the article list view
+    function showArticleList() {
+        articleListView.classList.remove('hidden');
+        articleSingleView.classList.add('hidden');
+        createArticleView.classList.add('hidden');
+        currentArticleId = null;
+    }
+
+    createArticleForm.addEventListener('submit', handleCreateArticle);
+
+    // Listen for clicks on the "Cancel" button in the create form
+    cancelCreateBtn.addEventListener('click', () => {
+        createArticleView.classList.add('hidden');
+        showArticleList(); 
+    });
+
+    // Return to article list on back link click
+    backToListLink.addEventListener('click', showArticleList);
+    
+    // Post new comment on form submit
+    commentForm.addEventListener('submit', postNewComment);
+
+    // Listen for clicks on the article list
+    articleListContainer.addEventListener('click', (e) => {
+        const articleElement = e.target.closest('article');
+        if (articleElement) {
+            if (!token) {
+                alert('Please log in to read the full story.');
+                window.location.href = 'login.html';
+            } else {
+                // If logged in, fetch the full article
+                const id = articleElement.dataset.id;
+                fetchSingleArticle(id);
+            }
+        }
+    });
+
+    function init() {
+        setupNav();
+        fetchArticleList(); 
+    }
+
+    // Start the application
+    init();
+});

@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 
-routes.post('/register', async (req, res) => {
+router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
         
@@ -25,7 +25,7 @@ routes.post('/register', async (req, res) => {
     }
 });
 
-routes.post('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
 
@@ -34,13 +34,13 @@ routes.post('/login', async (req, res) => {
         }
         
         const user = await User.findOne({ username });
-        if (user) {
-            return res.status(400).json({ message: 'Username already exists' });
+        if (!user) { 
+            return res.status(400).json({ message: 'Invalid credentials. Try registering an account.' });
         }
         
         const pwdMatch = await user.comparePassword(password);
         if (!pwdMatch) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        return res.status(400).json({ message: 'Invalid credentials. Password incorrect.' });
         }
 
         const payload = {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/article.model');
+const Article = require('../models/article.model');
 const jwt = require('jsonwebtoken');
 
 const checkAuth = (req, res, next) => {
@@ -26,7 +26,7 @@ const checkAuthor = (req, res, next) => {
     next();
 };
 
-routes.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const articles = await Article.find()
             .select('title teaser author categories createdAt')
