@@ -20,7 +20,10 @@
 
     <div id="ad-container" class="ad-box hidden">
         <h3>Sponsored Ad</h3>
-        <div id="ad-content">Loading ad...</div>
+        <div id="ad-content">
+            <p id="ad-text" style="margin-top: 0;">Loading ad...</p>
+            <img id="ad-image" src="" alt="Advertisement" style="height: 200px; display: none; margin-top: 5px;">
+        </div>
     </div>
 
     <div class="container">
@@ -28,7 +31,9 @@
             <div id="featured-article" class="article-view hidden">
                 <h2 id="featured-title"></h2>
                 <p class="meta">Posted on <span id="featured-date"></span></p>
-                <div id="featured-body" class="body"></div>
+                <div id="featured-body" class="body">
+                    <img id="featured-image" src="" alt="Featured Article Image" style="width: 100%; height: 300px; object-fit: cover; display: none; border-radius: 8px; margin-bottom: 1rem;">
+                </div>
             </div>
             <div class="main-content-col">
                 <div id="article-list-view">
@@ -42,7 +47,9 @@
                     <div class="article-view">
                         <h3 id="article-title"></h3>
                         <p class="meta">Posted on <span id="article-date"></span></p>
-                        <div id="article-body" class="body"></div>
+                        <div id="article-body" class="body">
+                            <img id="article-image" src="" alt="Article Image" style="width: 100%; height: 300px; object-fit: cover; display: none; border-radius: 8px; margin-bottom: 1rem;">
+                        </div>
                     </div>
 
                     <div class="comments">

@@ -30,7 +30,7 @@ const checkAuthor = (req, res, next) => {
 router.get('/', async (req, res) => {
     try {
         const articles = await Article.find()
-            .select('title teaser author categories createdAt')
+            .select('title teaser author categories createdAt imageUrl')
             .sort({ createdAt: -1 })
             .skip(1);
         res.status(200).json(articles);
@@ -68,12 +68,13 @@ router.get('/:id', checkAuth, async (req, res) => {
 
 router.post('/', checkAuth, checkAuthor, async (req, res) => {
     try {
-        const { title, teaser, body, categories } = req.body;
+        const { title, teaser, body, categories, imageUrl } = req.body;
 
         const newArticle = new Article({
             title,
             teaser,
             body,
+            imageUrl,
             categories,
             authorId: req.user.id
         });

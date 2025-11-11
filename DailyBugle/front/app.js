@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('user'));
     let currentArticleId = null;
 
+    const featuredImage = document.getElementById('featured-image');
+    const articleImage = document.getElementById('article-image');
+    const adText = document.getElementById('ad-text');
+    const adImage = document.getElementById('ad-image');
+
     const navAuth = document.getElementById('nav-auth');
     const navLinks = document.getElementById('nav-links');
     const articleListView = document.getElementById('article-list-view');
@@ -111,6 +116,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!res.ok) throw new Error('No featured article found');
             
             const article = await res.json();
+
+            if (article.imageUrl) {
+                featuredImage.src = article.imageUrl;
+                featuredImage.style.display = 'block';
+            } else {
+                featuredImage.style.display = 'none';
+            }
             
             featuredTitle.textContent = article.title;
             featuredDate.textContent = new Date(article.createdAt).toLocaleDateString();
@@ -142,7 +154,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const ad = await res.json();
             
             // Render the ad
-            adContent.textContent = ad.advertisement;
+            if (ad.imageUrl) {
+                adImage.src = ad.imageUrl;
+                adImage.style.display = 'block';
+            } else {
+                adImage.style.display = 'none';
+            }
+            adText.textContent = ad.advertisement;
+            adText.style.display = 'block';
             adContainer.classList.remove('hidden');
             
             // Record ad view
@@ -208,13 +227,20 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        articleListContainer.innerHTML = articles.map(article => `
-            <article data-id="${article._id}">
-                <h3>${article.title}</h3>
-                <p>${article.teaser}</p>
-                <small>Categories: ${article.categories.join(', ')}</small>
-            </article>
-        `).join('');
+        articleListContainer.innerHTML = articles.map(article => {
+            const imgHtml = article.imageUrl
+                ? `<img src="${article.imageUrl}" alt="${article.title}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;">`
+                : '';
+
+            return `
+                <article data-id="${article._id}">
+                    ${imgHtml} 
+                    <h3>${article.title}</h3>
+                    <p>${article.teaser}</p>
+                    <small>Categories: ${article.categories.join(', ')}</small>
+                </article>
+            `;
+        }).join('');
     }
 
     function showCreateArticleView() {
@@ -231,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = document.getElementById('create-title').value;
         const teaser = document.getElementById('create-teaser').value;
         const body = document.getElementById('create-body').value;
+        const imageUrl = document.getElementById('create-image-url').value;
         const categories = document.getElementById('create-categories').value.split(',')
                            .map(cat => cat.trim()).filter(cat => cat);
 
@@ -241,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ title, teaser, body, categories })
+                body: JSON.stringify({ title, teaser, body, categories, imageUrl })
             });
 
             if (!res.ok) {
@@ -270,6 +297,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // render a single full article
     function renderSingleArticle(article) {
+        if (article.imageUrl) {
+            articleImage.src = article.imageUrl;
+            articleImage.style.display = 'block';
+        } else {
+            articleImage.style.display = 'none';
+        }
         articleTitle.textContent = article.title;
         articleDate.textContent = new Date(article.createdAt).toLocaleDateString();
         articleBody.innerHTML = article.body.replace(/\n/g, '<br>'); // Convert newlines to <br>
