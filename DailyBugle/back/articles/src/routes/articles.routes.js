@@ -31,11 +31,27 @@ router.get('/', async (req, res) => {
     try {
         const articles = await Article.find()
             .select('title teaser author categories createdAt')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .skip(1);
         res.status(200).json(articles);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
+});
+
+router.get('/featured', async (req, res) => {
+  try {
+    const featuredArticle = await Article.findOne()
+      .sort({ createdAt: -1 });
+    
+    if (!featuredArticle) {
+      return res.status(404).json({ message: 'No articles found' });
+    }
+
+    res.status(200).json(featuredArticle); 
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', error: err.message });
+  }
 });
 
 router.get('/:id', checkAuth, async (req, res) => {

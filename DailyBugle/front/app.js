@@ -6,10 +6,16 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentArticleId = null;
 
     const navAuth = document.getElementById('nav-auth');
+    const navLinks = document.getElementById('nav-links');
     const articleListView = document.getElementById('article-list-view');
     const articleSingleView = document.getElementById('article-single-view');
     const articleListContainer = document.getElementById('article-list-container');
     const backToListLink = document.getElementById('back-to-list');
+
+    const featuredArticleView = document.getElementById('featured-article');
+    const featuredTitle = document.getElementById('featured-title');
+    const featuredDate = document.getElementById('featured-date');
+    const featuredBody = document.getElementById('featured-body');
 
     const createArticleView = document.getElementById('create-article-view');
     const createArticleForm = document.getElementById('create-article-form');
@@ -36,9 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 authorBtn = '<button id="new-post-btn">New Post</button>';
             }
 
+            navLinks.innerHTML = `
+                ${authorBtn}
+            `;
+
             navAuth.innerHTML = `
                 <span>Welcome, ${user.username} (${user.role})</span>
-                ${authorBtn}
                 <button id="logout-btn">Logout</button>
             `;
 
@@ -50,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('logout-btn').addEventListener('click', () => {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = 'login.html';
+                window.location.href = 'index.html';
             });
             // Show comment form 
             commentForm.classList.remove('hidden');
@@ -89,9 +98,39 @@ document.addEventListener('DOMContentLoaded', () => {
             
             articleListView.classList.add('hidden');
             articleSingleView.classList.remove('hidden');
+            featuredArticleView.classList.add('hidden');
         } catch (err) {
             console.error(err);
             showArticleList(); 
+        }
+    }
+
+    async function fetchFeaturedArticle() {
+        try {
+            const res = await fetch(`${API_URLS.articles}/articles/featured`);
+            if (!res.ok) throw new Error('No featured article found');
+            
+            const article = await res.json();
+            
+            featuredTitle.textContent = article.title;
+            featuredDate.textContent = new Date(article.createdAt).toLocaleDateString();
+            featuredBody.innerHTML = article.body.replace(/\n/g, '<br>');
+            
+            featuredTitle.style.cursor = 'pointer';
+
+            featuredTitle.addEventListener('click', () => {
+                if (!token) {
+                    alert('Please log in to read the full story and comment.');
+                    window.location.href = 'login.html';
+                } else {
+                    fetchSingleArticle(article._id);
+                }
+            });
+            
+            featuredArticleView.classList.remove('hidden');
+        } catch (err) {
+            console.warn(err.message);
+            featuredArticleView.classList.add('hidden'); 
         }
     }
 
@@ -112,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // Handle ad click
             adContainer.addEventListener('click', () => {
                 recordAdEvent('interaction', ad._id);
-                adContent.textContent = "Thanks for clicking!";
             });
 
         } catch (err) {
@@ -172,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         articleListContainer.innerHTML = articles.map(article => `
             <article data-id="${article._id}">
-                <h2>${article.title}</h2>
+                <h3>${article.title}</h3>
                 <p>${article.teaser}</p>
                 <small>Categories: ${article.categories.join(', ')}</small>
             </article>
@@ -183,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         articleListView.classList.add('hidden');
         articleSingleView.classList.add('hidden');
         createArticleView.classList.remove('hidden');
+        featuredArticleView.classList.add('hidden');
     }
 
     async function handleCreateArticle(e) {
@@ -221,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 msgEl.className = 'message';
                 showArticleList();
                 fetchArticleList();
-            }, 2000);
+            }, 200);
 
         } catch (err) {
             msgEl.textContent = `Error: ${err.message}`;
@@ -257,7 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
         articleListView.classList.remove('hidden');
         articleSingleView.classList.add('hidden');
         createArticleView.classList.add('hidden');
+        featuredArticleView.classList.remove('hidden');
         currentArticleId = null;
+
+        fetchFeaturedArticle();
     }
 
     createArticleForm.addEventListener('submit', handleCreateArticle);
@@ -285,12 +327,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 // If logged in, fetch the full article
                 const id = articleElement.dataset.id;
                 fetchSingleArticle(id);
+                featuredArticleView.classList.add('hidden');
             }
         }
     });
 
     function init() {
         setupNav();
+        fetchFeaturedArticle();
         fetchArticleList(); 
     }
 

@@ -4,139 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Daily Bugle</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f9f9f9; margin: 0; }
-        header { background: #333; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        header h1 { margin: 0; font-size: 1.5rem; }
-        header nav button, header nav span { background: none; border: none; color: white; cursor: pointer; font-size: 1rem; }
-        header nav button:hover { text-decoration: underline; }
-        .container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-        
-        /* Article List Styling */
-        .article-list article { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; cursor: pointer; }
-        .article-list article:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .article-list h2 { margin-top: 0; }
-        
-        /* Single Article View Styling */
-        .article-view h2 { margin-top: 0; }
-        .article-view .meta { color: #555; font-size: 0.9rem; margin-bottom: 1.5rem; }
-        .article-view .body { line-height: 1.6; }
-        .article-view a { color: #007aff; text-decoration: none; cursor: pointer; }
-        .article-view a:hover { text-decoration: underline; }
-        
-        /* Comments Section */
-        .comments { margin-top: 3rem; }
-        .comments h3 { border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
-        #comment-form textarea { width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-        #comment-form button { background: #007aff; color: white; border: none; border-radius: 4px; padding: 0.6rem 1rem; cursor: pointer; }
-        .comment { background: #fff; border: 1px solid #eee; padding: 1rem; border-radius: 4px; margin-top: 1rem; }
-        .comment strong { display: block; margin-bottom: 0.25rem; }
-        
-        /* Ad Box */
-        .ad-box { background: #f0f0f0; border: 1px dashed #ccc; padding: 1rem; text-align: center; margin-top: 2rem; }
-        .ad-box p { margin: 0; }
-
-        /* General */
-        .hidden { display: none; }
-
-        .form-group { margin-bottom: 1.5rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-        .form-group input, .form-group textarea { 
-            width: 100%; 
-            padding: 0.75rem; 
-            box-sizing: border-box; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            font-family: inherit;
-        }
-        .form-btn { 
-            width: 100%; 
-            padding: 0.75rem; 
-            background: #007aff; 
-            color: white; 
-            border: none; 
-            border-radius: 4px; 
-            font-size: 1rem; 
-            cursor: pointer; 
-            margin-top: 1rem; 
-        }
-        .form-btn:hover { background: #0056b3; }
-        .form-btn-secondary {
-            /* ... (same as form-btn but with gray background) ... */
-            background: #8e8e93;
-        }
-        .form-btn-secondary:hover { background: #6d6d72; }
-        .message { text-align: center; padding: 0.5rem; border-radius: 4px; margin-top: 1rem; }
-        .message.error { background: #ffebee; color: #c62828; }
-        .message.success { background: #e8f5e9; color: #2e7d32; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 
     <header>
         <h1>The Daily Bugle</h1>
+        <nav id="nav-links">
+        </nav>
+        
         <nav id="nav-auth">
             <a href="login.html"><button>Login</button></a>
         </nav>
     </header>
 
+    <div id="ad-container" class="ad-box hidden">
+        <h3>Sponsored Ad</h3>
+        <div id="ad-content">Loading ad...</div>
+    </div>
+
     <div class="container">
-
-        <div id="article-list-view">
-            <h2>Latest Stories</h2>
-            <div id="article-list-container">
-                </div>
-        </div>
-
-        <div id="article-single-view" class="hidden">
-            <a id="back-to-list">&laquo; Back to all stories</a>
-            <div class="article-view">
-                <h2 id="article-title"></h2>
-                <p class="meta">Posted on <span id="article-date"></span></p>
-                <div id="article-body" class="body"></div>
+        <div class="main-layout-grid"> 
+            <div id="featured-article" class="article-view hidden">
+                <h2 id="featured-title"></h2>
+                <p class="meta">Posted on <span id="featured-date"></span></p>
+                <div id="featured-body" class="body"></div>
             </div>
+            <div class="main-content-col">
+                <div id="article-list-view">
+                    <h2>Latest Stories</h2>
+                    <div id="article-list-container">
+                        </div>
+                </div>
 
-            <div class="comments">
-                <h3>Comments</h3>
-                <form id="comment-form" class="hidden">
-                    <textarea id="comment-body" placeholder="Write a comment..." required></textarea>
-                    <button type="submit">Post Comment</button>
-                </form>
-                <div id="comment-list"></div>
+                <div id="article-single-view" class="hidden">
+                    <a id="back-to-list">&laquo; Back to all stories</a>
+                    <div class="article-view">
+                        <h3 id="article-title"></h3>
+                        <p class="meta">Posted on <span id="article-date"></span></p>
+                        <div id="article-body" class="body"></div>
+                    </div>
+
+                    <div class="comments">
+                        <h3>Comments</h3>
+                        <form id="comment-form" class="hidden">
+                            <textarea id="comment-body" placeholder="Write a comment..." required></textarea>
+                            <button type="submit">Post Comment</button>
+                        </form>
+                        <div id="comment-list"></div>
+                    </div>
+                </div>
+
+                <div id="create-article-view" class="hidden">
+                    <h2>Create New Post</h2>
+                    <form id="create-article-form">
+                        <div class="form-group">
+                            <label for="create-title">Title</label>
+                            <input type="text" id="create-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="create-teaser">Teaser</label>
+                            <input type="text" id="create-teaser" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="create-categories">Categories (comma separated)</label>
+                            <input type="text" id="create-categories">
+                        </div>
+                        <div class="form-group">
+                            <label for="create-body">Body</label>
+                            <textarea id="create-body" rows="15" required></textarea>
+                        </div>
+                        <button type="submit" class="form-btn">Publish Post</button>
+                        <button type="button" id="cancel-create-btn" class="form-btn-secondary">Cancel</button>
+                        <div id="create-message" class="message"></div>
+                    </form>
+                </div>
             </div>
         </div>
-
-        <div id="create-article-view" class="hidden">
-            <h2>Create New Post</h2>
-            <form id="create-article-form">
-                <div class="form-group">
-                    <label for="create-title">Title</label>
-                    <input type="text" id="create-title" required>
-                </div>
-                <div class="form-group">
-                    <label for="create-teaser">Teaser</label>
-                    <input type="text" id="create-teaser" required>
-                </div>
-                <div class="form-group">
-                    <label for="create-categories">Categories (comma separated)</label>
-                    <input type="text" id="create-categories">
-                </div>
-                <div class="form-group">
-                    <label for="create-body">Body</label>
-                    <textarea id="create-body" rows="15" required></textarea>
-                </div>
-                <button type="submit" class="form-btn">Publish Post</button>
-                <button type="button" id="cancel-create-btn" class="form-btn-secondary">Cancel</button>
-                <div id="create-message" class="message"></div>
-            </form>
-        </div>
-
-        <div id="ad-container" class="ad-box hidden">
-
-        <div id="ad-container" class="ad-box hidden">
-            <p id="ad-content">Loading ad...</p>
-        </div>
-
     </div>
 
     <script src="api.js"></script>

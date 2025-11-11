@@ -1,0 +1,156 @@
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #F0F4EF; margin: 0; }
+
+header { 
+    background: #344966;
+    color: white; 
+    padding: 1rem 2rem; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+header h1 { 
+    margin: 0; 
+    font-size: 
+    1.5rem; 
+}
+
+h2 {
+    color: #0D1821;
+    border-bottom: 2px solid black;
+}
+header nav button, header nav span { 
+    background: none; 
+    border: none; 
+    color: white;
+    font-size: 1rem; 
+}
+header nav button {
+    cursor: pointer;
+}
+header nav button:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+
+
+/* Article List Styling */
+#article-list-container article { 
+    background: #fff; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 0 1.5rem; 
+    padding-bottom: 1rem; 
+    margin-bottom: 1.5rem; 
+    cursor: pointer; 
+}
+#article-list-container article:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+#article-list-container h2 { margin-top: 0; }
+
+.article-view {
+    background: #fff; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 1.5rem; 
+    padding-bottom: 1rem; 
+    margin-top: 20px;
+}
+/* Single Article View Styling */
+.article-view h2 { margin-top: 0; }
+.article-view .meta { color: #555; font-size: 0.9rem; margin-bottom: 1.5rem; }
+.article-view .body { line-height: 1.6; }
+.article-view a { color: #007aff; text-decoration: none; cursor: pointer; }
+.article-view a:hover { text-decoration: underline; }
+
+/* Comments Section */
+.comments { margin-top: 3rem; }
+.comments h3 { border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
+#comment-form textarea { width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+#comment-form button { background: #007aff; color: white; border: none; border-radius: 4px; padding: 0.6rem 1rem; cursor: pointer; }
+.comment { background: #fff; border: 1px solid #eee; padding: 1rem; border-radius: 4px; margin-top: 1rem; }
+.comment strong { display: block; margin-bottom: 0.25rem; }
+
+/* Ad Box */
+.ad-box { 
+    position: fixed;
+    top: 200px;
+    left: 20px;
+    width: 220px;
+    height: 300px;
+    background: #B4CDED; 
+    border: 1px dashed #ccc; 
+    padding: 1rem; 
+    text-align: center; }
+.ad-box p { margin: 0; }
+
+.main-layout-grid {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 2rem;
+}
+.main-content-col {
+    flex: 1; 
+    min-width: 0; 
+}
+.sidebar-col {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+/* General */
+.hidden { display: none; }
+
+.login-container {
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 4rem;
+}
+
+.form-container { background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 2rem 3rem; width: 320px; }
+.form-container h2 { text-align: center; margin-top: 0; }
+
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+.form-group input, .form-group textarea { 
+    width: 100%; 
+    padding: 0.75rem; 
+    box-sizing: border-box; 
+    border: 1px solid #ccc; 
+    border-radius: 4px; 
+    font-family: inherit;
+}
+.form-btn { 
+    width: 100%; 
+    padding: 0.75rem; 
+    background: #007aff; 
+    color: white; 
+    border: none; 
+    border-radius: 4px; 
+    font-size: 1rem; 
+    cursor: pointer; 
+    margin-top: 1rem; 
+}
+.form-btn:hover { background: #0056b3; }
+.form-btn-secondary {
+    /* ... (same as form-btn but with gray background) ... */
+    background: #8e8e93;
+}
+.form-btn-secondary:hover { background: #6d6d72; }
+.message { text-align: center; padding: 0.5rem; border-radius: 4px; margin-top: 1rem; }
+.message.error { background: #ffebee; color: #c62828; }
+.message.success { background: #e8f5e9; color: #2e7d32; }
+
+.toggle-link { text-align: center; margin-top: 1.5rem; }
+.toggle-link a { color: #007aff; cursor: pointer; text-decoration: none; }
+.toggle-link a:hover { text-decoration: underline; }
+
+#back-to-list { 
+    padding: 0.5rem 1rem; 
+    margin-bottom: 20px;
+    background-color: #007aff; 
+    color: white; 
+    border-radius: 4px;
+    cursor: pointer; 
+    text-decoration: none; 
+}
+
+#register-view { display: none; } /* Hide register form by default */
