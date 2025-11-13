@@ -1,0 +1,17 @@
+{{- range $key, $val := .Values.services }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  # IMPORTANT: The name here must match what your API.js expects
+  # But API.js expects localhost, which we will fix in Phase 6.
+  name: {{ $val.name }} 
+spec:
+  type: {{ $val.type }}
+  selector:
+    app: {{ $val.name }}
+  ports:
+    - protocol: TCP
+      port: {{ $val.port }}
+      targetPort: {{ $val.port }}
+{{- end }}

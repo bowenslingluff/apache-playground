@@ -1,0 +1,31 @@
+# Global environment variables (Secrets)
+# We will inject these into every container
+env:
+  mongoUri: "" 
+  jwtSecret: ""
+
+# Our list of Microservices
+services:
+  auth:
+    name: auth-service
+    image: bugle-auth:v1
+    port: 8081
+    type: ClusterIP # Internal only
+
+  articles:
+    name: article-service
+    image: bugle-articles:v1
+    port: 8082
+    type: ClusterIP # Internal only
+
+  ads:
+    name: ad-service
+    image: bugle-ads:v1
+    port: 8083
+    type: ClusterIP # Internal only
+
+  frontend:
+    name: web-server
+    image: bugle-front:v1
+    port: 80
+    type: NodePort # Accessible externally (via port forward)
