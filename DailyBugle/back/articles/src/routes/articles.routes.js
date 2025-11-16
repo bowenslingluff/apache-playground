@@ -54,6 +54,28 @@ router.get('/featured', async (req, res) => {
   }
 });
 
+
+router.get('/search', async (req, res) => {
+    console.log("Search query received:", req.query.q);
+    try {
+        const query = req.query.q;
+
+        const results = await Article.find(
+            { $text: { $search: query } },
+            
+            { score: { $meta: "textScore" } } 
+        )
+        // We select the fields and sort by the relevance score
+        .select('title teaser categories createdAt')
+        .sort({ score: { $meta: "textScore" } });
+
+        res.status(200).json(results);
+    } catch (err) {
+        console.error("TEXT SEARCH FAILED:", err); 
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 router.get('/:id', checkAuth, async (req, res) => {
     try {
         const article = await Article.findById(req.params.id)
@@ -145,23 +167,6 @@ router.post('/:id/comment', checkAuth, async (req, res) => {
         await article.save();
 
         res.status(201).json(article);
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' });
-    }
-});
-
-router.get('/search', async (req, res) => {
-    try {
-        const query = req.query.q;
-
-        const results = await Article.find(
-            { $text: { $search: query } },
-            { score: { $meta: "textScore" } }
-        )
-        .select('title teaser categories createdAt')
-        .sort({ score: { $meta: "textScore" } });
-
-        res.status(200).json(results);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }

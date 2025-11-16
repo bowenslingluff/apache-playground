@@ -1,4 +1,4 @@
-## 🟢 How to START the App 
+## 🟢 Kubernetes Deployment
 Start Docker Desktop: Ensure the Docker engine is running.
 
 Create the Cluster (If you deleted it):
@@ -9,11 +9,10 @@ kind create cluster --name dailybugle
 
 (If you didn't delete the cluster yesterday, skip this).
 
-## Install the App (If starting fresh):
+### Install the App (If starting fresh):
 
-
-### 1. Build images
 ```bash
+### 1. Build images
 docker build -t bugle-auth:v1 ./back/auth
 docker build -t bugle-articles:v1 ./back/articles
 docker build -t bugle-ads:v1 ./back/ads
@@ -37,7 +36,7 @@ Open the Connection: Run your script to open the "side windows" to your services
 ```
 Access: Go to http://localhost:8080.
 
-## 🔄 How to UPDATE the App
+### 🔄 How to UPDATE the App
 If you change code, it will not update automatically. You must follow this cycle:
 
 Edit your code.
@@ -63,7 +62,7 @@ helm upgrade dailybugle ./dailybugle-chart \
 ```
 Kubernetes will gracefully kill the old v1 pod and start the new v2 pod.
 
-## 🔴 How to STOP the App (End of Day)
+### 🔴 How to STOP the App
 Stop Connections: Press CTRL+C in the terminal running ./connect.sh.
 
 Save Resources (Optional): If you want to free up your computer's RAM, delete the cluster. It takes seconds to recreate it next time.
@@ -72,3 +71,19 @@ Save Resources (Optional): If you want to free up your computer's RAM, delete th
 kind delete cluster --name dailybugle
 ```
 If you don't delete it, it will keep running in the background of Docker Desktop
+
+## 🟢 Docker Only Deployment
+Start Docker Desktop: Ensure the Docker engine is running.
+
+Run the following command at root folder:
+```bash
+docker-compose up --build
+```
+
+### 🔴 How to STOP the App
+Press Ctrl+C in the terminal running docker-compose.
+
+Then run:
+```bash
+docker-compose down
+```

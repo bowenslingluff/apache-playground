@@ -9,7 +9,13 @@
 <body>
 
     <header>
-        <h1>The Daily Bugle</h1>
+        <a href="index.html">
+            <h1>The Daily Bugle</h1>
+        </a>
+        <form id="search-form" class="search-form">
+            <input type="search" id="search-input" placeholder="Search articles...">
+            <button type="submit">Search</button>
+        </form>
         <nav id="nav-links">
         </nav>
         
@@ -31,13 +37,14 @@
             <div id="featured-article" class="article-view hidden">
                 <h2 id="featured-title"></h2>
                 <p class="meta">Posted on <span id="featured-date"></span></p>
+                <img id="featured-image" src="" alt="Featured Image">
                 <div id="featured-body" class="body">
                 </div>
-                <img id="featured-image" src="" alt="Featured Article Image" style="width: 100%; height: 300px; object-fit: cover; display: none; border-radius: 8px; margin-bottom: 1rem;">
             </div>
             <div class="main-content-col">
                 <div id="article-list-view">
-                    <h2>Latest Stories</h2>
+                    <a id="back-to-home" class="hidden">&laquo; Back to home</a>
+                    <h2 id="article-list-title">Latest Stories</h2>
                     <div id="article-list-container">
                         </div>
                 </div>

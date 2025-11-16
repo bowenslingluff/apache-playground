@@ -9,6 +9,12 @@ header {
     align-items: center; 
 }
 
+header a { 
+    color: white;
+    text-decoration: none; 
+    cursor: pointer; 
+}
+
 header h1 { 
     margin: 0; 
     font-size: 
@@ -29,8 +35,12 @@ header nav button {
     cursor: pointer;
 }
 header nav button:hover { text-decoration: underline; }
-.container { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
 
+.container {
+    max-width: 1130px; 
+    margin: 2rem auto 2rem 2rem;
+    padding: 0 1rem;
+}
 
 /* Article List Styling */
 #article-list-container article { 
@@ -52,16 +62,31 @@ header nav button:hover { text-decoration: underline; }
     padding: 1.5rem; 
     padding-bottom: 1rem; 
     margin-top: 20px;
+    overflow: auto;
 }
 /* Single Article View Styling */
+.article-view h3 { margin-top: 0; }
 .article-view h2 { margin-top: 0; }
 .article-view .meta { color: #555; font-size: 0.9rem; margin-bottom: 1.5rem; }
 .article-view .body { line-height: 1.6; }
 .article-view a { color: #007aff; text-decoration: none; cursor: pointer; }
 .article-view a:hover { text-decoration: underline; }
 
+#featured-image {
+    float: right;
+    width: 35%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+
+    margin-left: 20px;
+    margin-bottom: 10px;
+    
+    display: none; 
+}
+
 /* Comments Section */
-.comments { margin-top: 3rem; }
+.comments { margin-top: 2rem; }
 .comments h3 { border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
 #comment-form textarea { width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
 #comment-form button { background: #007aff; color: white; border: none; border-radius: 4px; padding: 0.6rem 1rem; cursor: pointer; }
@@ -77,7 +102,7 @@ header nav button:hover { text-decoration: underline; }
 .ad-box { 
     position: fixed;
     top: 200px;
-    left: 20px;
+    right: 35px;
     width: 220px;
     height: 300px;
     background: #B4CDED; 
@@ -160,3 +185,25 @@ header nav button:hover { text-decoration: underline; }
 }
 
 #register-view { display: none; } /* Hide register form by default */
+
+.search-form {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 1rem;
+}
+.search-form input {
+    width: 300px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+}
+.search-form button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #007aff;
+    background: #007aff;
+    color: white;
+    cursor: pointer;
+    border-radius: 0 4px 4px 0;
+}

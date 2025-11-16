@@ -10,12 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const adText = document.getElementById('ad-text');
     const adImage = document.getElementById('ad-image');
 
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const articleListTitle = document.getElementById('article-list-title');
+
     const navAuth = document.getElementById('nav-auth');
     const navLinks = document.getElementById('nav-links');
     const articleListView = document.getElementById('article-list-view');
     const articleSingleView = document.getElementById('article-single-view');
     const articleListContainer = document.getElementById('article-list-container');
     const backToListLink = document.getElementById('back-to-list');
+    const backToHomeLink = document.getElementById('back-to-home');
+
 
     const featuredArticleView = document.getElementById('featured-article');
     const featuredTitle = document.getElementById('featured-title');
@@ -90,6 +96,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function fetchSearchResults(query) {
+        try {
+            // Call the search endpoint
+            const res = await fetch(`${API_URLS.articles}/articles/search?q=${encodeURIComponent(query)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!res.ok) throw new Error('Search failed to return results');
+            
+            const articles = await res.json();
+            
+            articleListView.classList.remove('hidden');
+            articleSingleView.classList.add('hidden');
+            createArticleView.classList.add('hidden');
+            featuredArticleView.classList.add('hidden');
+            
+            // --- Update the UI ---
+            articleListTitle.textContent = `Search Results for "${query}"`;
+            backToHomeLink.classList.remove('hidden');
+            renderArticleList(articles); 
+            
+        } catch (err) {
+            console.error(err);
+            articleListTitle.textContent = `Search Results`;
+            articleListContainer.innerHTML = `<p>${err.message}</p>`;
+        }
+    }
+
     // Fetch a single full article
     async function fetchSingleArticle(id) {
         try {
@@ -126,7 +161,17 @@ document.addEventListener('DOMContentLoaded', () => {
             
             featuredTitle.textContent = article.title;
             featuredDate.textContent = new Date(article.createdAt).toLocaleDateString();
-            featuredBody.innerHTML = article.body.replace(/\n/g, '<br>');
+            
+            const maxChars = 1000; 
+            let bodyText = article.body;
+
+            if (bodyText.length > maxChars) {
+                const cutOff = bodyText.lastIndexOf(' ', maxChars);
+                const finalCutOff = (cutOff === -1) ? maxChars : cutOff;
+                
+                bodyText = bodyText.substring(0, finalCutOff) + "...";
+            }
+            featuredBody.innerHTML = bodyText.replace(/\n/g, '<br>');
             
             featuredTitle.style.cursor = 'pointer';
 
@@ -332,8 +377,36 @@ document.addEventListener('DOMContentLoaded', () => {
         featuredArticleView.classList.remove('hidden');
         currentArticleId = null;
 
+        articleListTitle.textContent = 'Latest Stories';
+        searchInput.value = '';
+        backToHomeLink.classList.add('hidden');
+
         fetchFeaturedArticle();
+        fetchArticleList();
     }
+
+    searchForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // --- ADD THIS CHECK ---
+        if (!token) {
+            articleListTitle.textContent = 'You must be logged in to search.';
+            articleListContainer.innerHTML = '';
+            
+            // Make sure the main list view is visible
+            articleListView.classList.remove('hidden');
+            articleSingleView.classList.add('hidden');
+            createArticleView.classList.add('hidden');
+            featuredArticleView.classList.add('hidden');
+            return;
+        }
+        const query = searchInput.value;
+        if (query) {
+            featuredArticleView.classList.add('hidden');
+            // If we are here, the user is logged in AND has a query
+            fetchSearchResults(query);
+        }
+    });
 
     createArticleForm.addEventListener('submit', handleCreateArticle);
 
@@ -345,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Return to article list on back link click
     backToListLink.addEventListener('click', showArticleList);
+    backToHomeLink.addEventListener('click', showArticleList);
     
     // Post new comment on form submit
     commentForm.addEventListener('submit', postNewComment);
