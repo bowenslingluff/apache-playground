@@ -65,7 +65,7 @@ router.get('/search', async (req, res) => {
             
             { score: { $meta: "textScore" } } 
         )
-        // We select the fields and sort by the relevance score
+        
         .select('title teaser categories createdAt')
         .sort({ score: { $meta: "textScore" } });
 

@@ -72,7 +72,7 @@ header nav button:hover { text-decoration: underline; }
 .article-view a { color: #007aff; text-decoration: none; cursor: pointer; }
 .article-view a:hover { text-decoration: underline; }
 
-#featured-image {
+.article-image {
     float: right;
     width: 35%;
     height: auto;
@@ -175,6 +175,16 @@ header nav button:hover { text-decoration: underline; }
 .toggle-link a:hover { text-decoration: underline; }
 
 #back-to-list { 
+    padding: 0.5rem 1rem; 
+    margin-bottom: 20px;
+    background-color: #007aff; 
+    color: white; 
+    border-radius: 4px;
+    cursor: pointer; 
+    text-decoration: none; 
+}
+
+#back-to-home { 
     padding: 0.5rem 1rem; 
     margin-bottom: 20px;
     background-color: #007aff; 
