@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Get user data from local storage
     const token = localStorage.getItem('token');
     const user = JSON.parse(localStorage.getItem('user'));
+    console.log("Logged in user:", user);
     let currentArticleId = null;
 
     const featuredImage = document.getElementById('featured-image');
@@ -15,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const articleListTitle = document.getElementById('article-list-title');
 
     const navAuth = document.getElementById('nav-auth');
-    const navLinks = document.getElementById('nav-links');
     const articleListView = document.getElementById('article-list-view');
     const articleSingleView = document.getElementById('article-single-view');
     const articleListContainer = document.getElementById('article-list-container');
@@ -31,6 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const createArticleView = document.getElementById('create-article-view');
     const createArticleForm = document.getElementById('create-article-form');
     const cancelCreateBtn = document.getElementById('cancel-create-btn');
+    const newPostBtn = document.getElementById('new-post-btn');
+    const deletePostBtn = document.getElementById('delete-post-btn');
 
     // Single article elements
     const articleTitle = document.getElementById('article-title');
@@ -47,15 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update header based on login status
     function setupNav() {
-        if (token && user) { // User is logged in
-            let authorBtn = '';
-            if (user.role === 'Author') {
-                authorBtn = '<button id="new-post-btn">New Post</button>';
-            }
-
-            navLinks.innerHTML = `
-                ${authorBtn}
-            `;
+        if (token && user) { 
 
             navAuth.innerHTML = `
                 <span>Welcome, ${user.username} (${user.role})</span>
@@ -63,7 +57,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
 
             if (user.role === 'Author') {
-                document.getElementById('new-post-btn').addEventListener('click', showCreateArticleView);
+                newPostBtn.classList.remove('hidden');
+                newPostBtn.addEventListener('click', showCreateArticleView);
             }
             
             // Add check for logout button
@@ -139,6 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
             articleListView.classList.add('hidden');
             articleSingleView.classList.remove('hidden');
             featuredArticleView.classList.add('hidden');
+            if (user && user.role === 'Author' && article.authorId === user.id) {
+                deletePostBtn.classList.remove('hidden');
+            } else {
+                deletePostBtn.classList.add('hidden');
+            }
         } catch (err) {
             console.error(err);
             showArticleList(); 
@@ -273,16 +273,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         articleListContainer.innerHTML = articles.map(article => {
+            // We give the image a specific class 'article-thumb' 
             const imgHtml = article.imageUrl
-                ? `<img src="${article.imageUrl}" alt="${article.title}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 1rem;">`
+                ? `<img src="${article.imageUrl}" alt="${article.title}" class="article-thumb">`
                 : '';
 
             return `
-                <article data-id="${article._id}">
+                <article data-id="${article._id}" class="article-card">
+                    
+                    <div class="article-text">
+                        <h3>${article.title}</h3>
+                        <p>${article.teaser}</p>
+                        <small>Categories: ${article.categories.join(', ')}</small>
+                    </div>
+
                     ${imgHtml} 
-                    <h3>${article.title}</h3>
-                    <p>${article.teaser}</p>
-                    <small>Categories: ${article.categories.join(', ')}</small>
+                    
                 </article>
             `;
         }).join('');
@@ -293,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
         articleSingleView.classList.add('hidden');
         createArticleView.classList.remove('hidden');
         featuredArticleView.classList.add('hidden');
+        newPostBtn.classList.add('hidden');
     }
 
     async function handleCreateArticle(e) {
@@ -340,6 +347,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function handleDeleteArticle() {
+        if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URLS.articles}/articles/${currentArticleId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message);
+            }
+
+            alert('Article deleted successfully.');
+            
+            // Go back to the main list
+            showArticleList();
+            fetchArticleList(); // Refresh the list to remove the deleted item
+
+        } catch (err) {
+            console.error(err);
+            alert(`Error deleting article: ${err.message}`);
+        }
+    }
+
     // render a single full article
     function renderSingleArticle(article) {
         if (article.imageUrl) {
@@ -381,6 +418,11 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInput.value = '';
         backToHomeLink.classList.add('hidden');
 
+        if (user && user.role === 'Author') {
+            newPostBtn.classList.remove('hidden');
+        }
+        deletePostBtn.classList.add('hidden');
+
         fetchFeaturedArticle();
         fetchArticleList();
     }
@@ -415,6 +457,8 @@ document.addEventListener('DOMContentLoaded', () => {
         createArticleView.classList.add('hidden');
         showArticleList(); 
     });
+
+    deletePostBtn.addEventListener('click', handleDeleteArticle);
 
     // Return to article list on back link click
     backToListLink.addEventListener('click', showArticleList);
