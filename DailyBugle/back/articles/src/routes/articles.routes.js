@@ -54,24 +54,31 @@ router.get('/featured', async (req, res) => {
   }
 });
 
+const escapeRegex = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+};
 
 router.get('/search', async (req, res) => {
     console.log("Search query received:", req.query.q);
     try {
         const query = req.query.q;
+        if (!query) return res.status(200).json([]);
+        const searchRegex = new RegExp(escapeRegex(query), 'i');
 
-        const results = await Article.find(
-            { $text: { $search: query } },
-            
-            { score: { $meta: "textScore" } } 
-        )
-        
-        .select('title teaser categories createdAt')
-        .sort({ score: { $meta: "textScore" } });
+        const results = await Article.find({
+            $or: [
+                { title: { $regex: searchRegex } },
+                { body: { $regex: searchRegex } },
+                { categories: { $regex: searchRegex } },
+                { teaser: { $regex: searchRegex } }
+            ]
+        })
+        .select('title teaser categories createdAt imageUrl')
+        .sort({ createdAt: -1 });
 
         res.status(200).json(results);
     } catch (err) {
-        console.error("TEXT SEARCH FAILED:", err); 
+        console.error("SEARCH FAILED:", err); 
         res.status(500).json({ message: 'Server error' });
     }
 });

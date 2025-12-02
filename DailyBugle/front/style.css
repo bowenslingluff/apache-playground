@@ -211,7 +211,13 @@ header nav button:hover { text-decoration: underline; }
     margin-top: 4rem;
 }
 
-.form-container { background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 2rem 3rem; width: 320px; }
+.form-container { 
+    background: #fff; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); 
+    padding: 2rem 3rem; 
+    width: 320px; 
+}
 .form-container h2 { text-align: center; margin-top: 0; }
 
 .form-group { margin-bottom: 1.5rem; }
@@ -239,8 +245,9 @@ header nav button:hover { text-decoration: underline; }
     border: none; 
     border-radius: 4px; 
     font-size: 1rem; 
-    cursor: pointer; 
-    margin-top: 1rem; 
+    cursor: pointer;
+    display: block;
+    margin: 1rem auto;
 }
 .form-btn:hover { background: #0056b3; }
 .form-btn-secondary {
