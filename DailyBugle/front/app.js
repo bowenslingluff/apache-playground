@@ -5,11 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('user'));
     console.log("Logged in user:", user);
     let currentArticleId = null;
+    let allArticles = [];
 
     const featuredImage = document.getElementById('featured-image');
     const articleImage = document.getElementById('article-image');
     const adText = document.getElementById('ad-text');
     const adImage = document.getElementById('ad-image');
+
+    const categoriesListContainer = document.querySelector('.categories-list');
 
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
@@ -33,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelCreateBtn = document.getElementById('cancel-create-btn');
     const newPostBtn = document.getElementById('new-post-btn');
     const deletePostBtn = document.getElementById('delete-post-btn');
+    const editPostBtn = document.getElementById('edit-post-btn');
 
     // Single article elements
     const articleTitle = document.getElementById('article-title');
@@ -85,7 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`${API_URLS.articles}/articles`);
             if (!res.ok) throw new Error('Failed to fetch articles');
             const articles = await res.json();
+            allArticles = articles;
             renderArticleList(articles);
+            renderCategories(articles);
         } catch (err) {
             articleListContainer.innerHTML = `<p>Error: ${err.message}</p>`;
         }
@@ -133,11 +139,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             articleListView.classList.add('hidden');
             articleSingleView.classList.remove('hidden');
+            categoriesListContainer.classList.add('hidden');
             featuredArticleView.classList.add('hidden');
             if (user && user.role === 'Author' && article.authorId === user.id) {
                 deletePostBtn.classList.remove('hidden');
+                editPostBtn.classList.remove('hidden');
             } else {
                 deletePostBtn.classList.add('hidden');
+                editPostBtn.classList.add('hidden');
             }
         } catch (err) {
             console.error(err);
@@ -294,12 +303,55 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     }
 
+    function renderCategories(articles) {
+        const allCats = articles.flatMap(a => a.categories);
+        const uniqueCats = [...new Set(allCats)];
+        let html = `<h3>Browse by Category</h3>`;
+        
+        html += `<button class="cat-btn" data-cat="all" style="margin: 2px;">All</button> `;
+
+        uniqueCats.forEach(cat => {
+            html += `<button class="cat-btn" data-cat="${cat}" style="margin: 2px;">${cat}</button> `;
+        });
+
+        categoriesListContainer.innerHTML = html;
+
+        document.querySelectorAll('.cat-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const selectedCat = e.target.dataset.cat;
+                filterArticlesByCategory(selectedCat);
+            });
+        });
+    }
+
+    function filterArticlesByCategory(category) {
+        if (category === 'all') {
+            renderArticleList(allArticles);
+            articleListTitle.textContent = "Latest Stories";
+            featuredArticleView.classList.remove('hidden');
+        } else {
+            const filtered = allArticles.filter(article => 
+                article.categories.includes(category)
+            );
+            renderArticleList(filtered);
+            articleListTitle.textContent = `Category: ${category}`;
+            featuredArticleView.classList.add('hidden');
+        }
+    }
+
     function showCreateArticleView() {
+        isEditing = false;
+        createArticleForm.reset(); 
+        document.querySelector('#create-article-view h2').textContent = "Create New Post";
+        document.querySelector('#create-article-form button[type="submit"]').textContent = "Publish Post";
+
         articleListView.classList.add('hidden');
         articleSingleView.classList.add('hidden');
         createArticleView.classList.remove('hidden');
         featuredArticleView.classList.add('hidden');
         newPostBtn.classList.add('hidden');
+        editPostBtn.classList.add('hidden');
+        deletePostBtn.classList.add('hidden');
     }
 
     async function handleCreateArticle(e) {
@@ -314,32 +366,55 @@ document.addEventListener('DOMContentLoaded', () => {
                            .map(cat => cat.trim()).filter(cat => cat);
 
         try {
-            const res = await fetch(`${API_URLS.articles}/articles`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ title, teaser, body, categories, imageUrl })
-            });
+            if (isEditing) {
+                // UPDATE (PUT)
+                res = await fetch(`${API_URLS.articles}/articles/${currentArticleId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, teaser, body, categories, imageUrl })
+                });
+            } else {
+                // CREATE (POST)
+                res = await fetch(`${API_URLS.articles}/articles`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, teaser, body, categories, imageUrl })
+                });
+            }
 
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.message);
             }
 
-            const newArticle = await res.json();
-            
-            msgEl.textContent = 'Article created successfully!';
+            msgEl.textContent = isEditing ? 'Article updated!' : 'Article created!';
             msgEl.className = 'message success';
             createArticleForm.reset();
-            
+
+
             setTimeout(() => {
                 msgEl.textContent = '';
                 msgEl.className = 'message';
-                showArticleList();
-                fetchArticleList();
-            }, 200);
+
+                createArticleView.classList.add('hidden');
+                
+                if (isEditing) {
+                    // If editing, go back to that specific article
+                    fetchSingleArticle(currentArticleId);
+                } else {
+                    // If new, go back to home
+                    showArticleList();
+                    fetchArticleList();
+                }
+
+                isEditing = false;
+            }, 1000);
 
         } catch (err) {
             msgEl.textContent = `Error: ${err.message}`;
@@ -377,6 +452,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function startEditMode() {
+        isEditing = true; // We are now editing
+        
+        fetch(`${API_URLS.articles}/articles/${currentArticleId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(res => res.json())
+        .then(article => {
+            // 2. Fill the form
+            document.getElementById('create-title').value = article.title;
+            document.getElementById('create-teaser').value = article.teaser;
+            document.getElementById('create-body').value = article.body;
+            document.getElementById('create-categories').value = article.categories.join(', ');
+            document.getElementById('create-image-url').value = article.imageUrl || '';
+
+            // 3. Change UI Text
+            document.querySelector('#create-article-view h2').textContent = "Edit Post";
+            document.querySelector('#create-article-form button[type="submit"]').textContent = "Update Post";
+
+            // 4. Show the View
+            articleListView.classList.add('hidden');
+            articleSingleView.classList.add('hidden');
+            createArticleView.classList.remove('hidden');
+            
+            // Hide buttons
+            editPostBtn.classList.add('hidden');
+            deletePostBtn.classList.add('hidden');
+        });
+    }
+
     // render a single full article
     function renderSingleArticle(article) {
         if (article.imageUrl) {
@@ -409,6 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show the article list view
     function showArticleList() {
         articleListView.classList.remove('hidden');
+        categoriesListContainer.classList.remove('hidden');
         articleSingleView.classList.add('hidden');
         createArticleView.classList.add('hidden');
         featuredArticleView.classList.remove('hidden');
@@ -422,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newPostBtn.classList.remove('hidden');
         }
         deletePostBtn.classList.add('hidden');
+        editPostBtn.classList.add('hidden');
 
         fetchFeaturedArticle();
         fetchArticleList();
@@ -452,13 +559,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     createArticleForm.addEventListener('submit', handleCreateArticle);
 
-    // Listen for clicks on the "Cancel" button in the create form
-    cancelCreateBtn.addEventListener('click', () => {
-        createArticleView.classList.add('hidden');
-        showArticleList(); 
-    });
-
+    editPostBtn.addEventListener('click', startEditMode);
     deletePostBtn.addEventListener('click', handleDeleteArticle);
+    
+    cancelCreateBtn.addEventListener('click', () => {
+        isEditing = false;
+        createArticleView.classList.add('hidden');
+        
+        // If we were editing, go back to the single view
+        if (currentArticleId) {
+             articleSingleView.classList.remove('hidden');
+             // Show buttons again
+             editPostBtn.classList.remove('hidden');
+             deletePostBtn.classList.remove('hidden');
+        } else {
+             showArticleList();
+        }
+    });
 
     // Return to article list on back link click
     backToListLink.addEventListener('click', showArticleList);
