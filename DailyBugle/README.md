@@ -4,7 +4,7 @@ Start Docker Desktop: Ensure the Docker engine is running.
 Create the Cluster (If you deleted it):
 
 ```bash
-kind create cluster --name dailybugle
+kind create cluster --name dailybugle --config kind-config.yaml
 ```
 (If you didn't delete the cluster, skip this).
 
@@ -32,7 +32,7 @@ kind load docker-image bugle-front:v1 --name dailybugle
 
 ### 3. Install Chart
 helm install dailybugle ./dailybugle-chart \
-  --set env.mongoUri="YOUR_REAL_MONGO_URI" \
+  --set env.mongoUri="mongodb://root:hello123@mongo-service:27017/dailybugle?authSource=admin" \
   --set env.jwtSecret="YOUR_SUPER_SECRET_KEY"
 ```
 ## Access and Dashboard proxy
