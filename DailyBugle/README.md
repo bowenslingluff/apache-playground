@@ -22,13 +22,13 @@ kubectl apply -f dashboard-admin.yaml
 docker build -t bugle-auth:v1 ./back/auth
 docker build -t bugle-articles:v1 ./back/articles
 docker build -t bugle-ads:v1 ./back/ads
-docker build -t bugle-front:v1 ./front
+docker build -t bugle-front:v4 ./front
 
 ### 2. Load images
 kind load docker-image bugle-auth:v1 --name dailybugle
 kind load docker-image bugle-articles:v1 --name dailybugle
 kind load docker-image bugle-ads:v1 --name dailybugle
-kind load docker-image bugle-front:v1 --name dailybugle
+kind load docker-image bugle-front:v4 --name dailybugle
 
 ### 3. Install Chart
 helm install dailybugle ./dailybugle-chart \
