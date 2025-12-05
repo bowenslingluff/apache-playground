@@ -37,11 +37,11 @@
     <button id="new-post-btn" class="hidden">
         Create Post
     </button>
-    <button id="delete-post-btn" class="hidden">
-        Delete Post
-    </button>
     <button id="edit-post-btn" class="hidden">
         Edit Post
+    </button>
+    <button id="delete-post-btn" class="hidden">
+        Delete Post
     </button>
 
     <div class="container">
@@ -62,7 +62,14 @@
                 </div>
 
                 <div id="article-single-view" class="hidden">
-                    <a id="back-to-list">&laquo; Back to all stories</a>
+                    <div class="article-nav" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <a id="back-to-list">&laquo; Back to all stories</a>
+                        
+                        <div class="prev-next-buttons">
+                            <button id="prev-article-btn" class="nav-btn">&lsaquo; Prev</button>
+                            <button id="next-article-btn" class="nav-btn">Next &rsaquo;</button>
+                        </div>
+                    </div>
                     <div class="article-view">
                         <h3 id="article-title"></h3>
                         <p class="meta">Posted on <span id="article-date"></span></p>

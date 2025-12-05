@@ -106,7 +106,7 @@ header nav button:hover { text-decoration: underline; }
 .article-view h2 { margin-top: 0; }
 .article-view .meta { color: #555; font-size: 0.9rem; margin-bottom: 1.5rem; }
 .article-view .body { line-height: 1.6; }
-.article-view a { color: #007aff; text-decoration: none; cursor: pointer; }
+.article-view a { color: #344966; text-decoration: none; cursor: pointer; }
 .article-view a:hover { text-decoration: underline; }
 
 .article-image {
@@ -126,7 +126,8 @@ header nav button:hover { text-decoration: underline; }
 .comments { margin-top: 2rem; }
 .comments h3 { border-bottom: 1px solid #ccc; padding-bottom: 0.5rem; }
 #comment-form textarea { width: 100%; min-height: 80px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
-#comment-form button { background: #007aff; color: white; border: none; border-radius: 4px; padding: 0.6rem 1rem; cursor: pointer; }
+#comment-form button { background: #344966; color: white; border: none; border-radius: 4px; padding: 0.6rem 1rem; cursor: pointer; }
+#comment-form button:hover { background: #657999; }
 .comment { background: #fff; border: 1px solid #eee; padding: 1rem; border-radius: 4px; margin-top: 1rem; }
 .comment strong { display: block; margin-bottom: 0.25rem; }
 
@@ -267,13 +268,13 @@ header nav button:hover { text-decoration: underline; }
 .message.success { background: #e8f5e9; color: #2e7d32; }
 
 .toggle-link { text-align: center; margin-top: 1.5rem; }
-.toggle-link a { color: #007aff; cursor: pointer; text-decoration: none; }
+.toggle-link a { color: #344966; cursor: pointer; text-decoration: none; }
 .toggle-link a:hover { text-decoration: underline; }
 
 #back-to-list { 
     padding: 0.5rem 1rem; 
     margin-bottom: 20px;
-    background-color: #007aff; 
+    background-color: #344966; 
     color: white; 
     border-radius: 4px;
     cursor: pointer; 
@@ -283,11 +284,19 @@ header nav button:hover { text-decoration: underline; }
 #back-to-home { 
     padding: 0.5rem 1rem; 
     margin-bottom: 20px;
-    background-color: #007aff; 
+    background-color: #344966; 
     color: white; 
     border-radius: 4px;
     cursor: pointer; 
     text-decoration: none; 
+}
+
+#back-to-home:hover {
+    background: #657999;
+}
+
+#back-to-list:hover {
+    background: #657999;
 }
 
 #register-view { display: none; } /* Hide register form by default */
@@ -315,7 +324,7 @@ header nav button:hover { text-decoration: underline; }
 }
 
 #new-post-btn {
-    background-color: #28a745;
+    background-color: green;
     color: white;
     padding: 0.5rem 1rem;
     border: none;
@@ -324,7 +333,7 @@ header nav button:hover { text-decoration: underline; }
     text-decoration: none;
     position: fixed;
     font-size: medium;
-    top: 100px;
+    top: 400px;
     right: 35px;
     width: 120px;
     height: 32px;
@@ -340,14 +349,14 @@ header nav button:hover { text-decoration: underline; }
     text-decoration: none;
     position: fixed;
     font-size: medium;
-    top: 160px;
+    top: 480px;
     right: 35px;
     width: 120px;
     height: 32px;
 }
 
 #edit-post-btn {
-    background-color: rgb(22, 172, 247);
+    background-color: #007aff;
     color: white;
     padding: 0.5rem 1rem;
     border: none;
@@ -356,8 +365,25 @@ header nav button:hover { text-decoration: underline; }
     text-decoration: none;
     position: fixed;
     font-size: medium;
-    top: 220px;
+    top: 440px;
     right: 35px;
     width: 120px;
     height: 32px;
+}
+
+.nav-btn {
+    padding: 0.5rem 1rem; 
+    margin-bottom: 20px;
+    background-color: #344966; 
+    color: white; 
+    border-radius: 4px;
+    cursor: pointer; 
+    text-decoration: none; 
+}
+.nav-btn:hover {
+    background: #657999;
+}
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

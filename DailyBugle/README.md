@@ -6,9 +6,15 @@ Create the Cluster (If you deleted it):
 ```bash
 kind create cluster --name dailybugle
 ```
+(If you didn't delete the cluster, skip this).
 
-(If you didn't delete the cluster yesterday, skip this).
+# Install and Configure Dashboard
+```bash
+helm repo add kubernetes-dashboard https://kubernetes.github.io/dashboard/
+helm upgrade --install kubernetes-dashboard kubernetes-dashboard/kubernetes-dashboard --create-namespace --namespace kubernetes-dashboard
 
+kubectl apply -f dashboard-admin.yaml
+```
 ### Install the App (If starting fresh):
 
 ```bash
@@ -27,14 +33,21 @@ kind load docker-image bugle-front:v1 --name dailybugle
 ### 3. Install Chart
 helm install dailybugle ./dailybugle-chart \
   --set env.mongoUri="YOUR_REAL_MONGO_URI" \
-  --set env.jwtSecret="YOUR_REAL_SECRET"
+  --set env.jwtSecret="YOUR_SUPER_SECRET_KEY"
+```
+## Access and Dashboard proxy
+```bash
+kubectl -n kubernetes-dashboard create token admin-user
+kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443 &
 ```
 
 Open the Connection: Run your script to open the "side windows" to your services:
 ```bash
 ./connect.sh
 ```
-Access: Go to http://localhost:8080.
+Access the app: Go to http://localhost:8080.
+
+Access the dashboard: Go to https://localhost:8443, and use the token generated before to log in.
 
 ### 🔄 How to UPDATE the App
 If you change code, it will not update automatically. You must follow this cycle:

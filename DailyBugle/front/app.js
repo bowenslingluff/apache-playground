@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const articleListContainer = document.getElementById('article-list-container');
     const backToListLink = document.getElementById('back-to-list');
     const backToHomeLink = document.getElementById('back-to-home');
+    const prevArticleBtn = document.getElementById('prev-article-btn');
+    const nextArticleBtn = document.getElementById('next-article-btn');
 
 
     const featuredArticleView = document.getElementById('featured-article');
@@ -494,6 +496,22 @@ document.addEventListener('DOMContentLoaded', () => {
         articleDate.textContent = new Date(article.createdAt).toLocaleDateString();
         articleBody.innerHTML = article.body.replace(/\n/g, '<br>'); // Convert newlines to <br>
         renderComments(article.comments);
+
+        const currentIndex = allArticles.findIndex(a => a._id === article._id);
+
+        if (currentIndex > 0) {
+            prevArticleBtn.disabled = false;
+            prevArticleBtn.dataset.id = allArticles[currentIndex - 1]._id;
+        } else {
+            prevArticleBtn.disabled = true; 
+        }
+
+        if (currentIndex < allArticles.length - 1) {
+            nextArticleBtn.disabled = false;
+            nextArticleBtn.dataset.id = allArticles[currentIndex + 1]._id;
+        } else {
+            nextArticleBtn.disabled = true;
+        }
     }
     
     // render comments for an article
@@ -580,6 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Return to article list on back link click
     backToListLink.addEventListener('click', showArticleList);
     backToHomeLink.addEventListener('click', showArticleList);
+    prevArticleBtn.addEventListener('click', () => {
+        const id = prevArticleBtn.dataset.id;
+        if (id) fetchSingleArticle(id);
+    });
+
+    nextArticleBtn.addEventListener('click', () => {
+        const id = nextArticleBtn.dataset.id;
+        if (id) fetchSingleArticle(id);
+    });
     
     // Post new comment on form submit
     commentForm.addEventListener('submit', postNewComment);
